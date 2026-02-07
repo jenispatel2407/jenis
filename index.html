@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Srushti 💖 Will You Be My Valentine?</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+    <style>
+        :root {
+            --pink: #ff3b7a;
+            --pink-dark: #ff2f6f;
+            --dark-card: rgba(25, 15, 40, 0.92);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100svh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle at top, #fff0f6, #ffd6e7);
+            font-family: "Poppins", sans-serif;
+            overflow: hidden;
+            transition: background 0.6s ease;
+        }
+
+        body.dark {
+            background: radial-gradient(circle at top, #1a0f2b, #0b0615);
+        }
+
+        /* ⭐ STARS */
+        #starsCanvas {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+        }
+
+        body.dark #starsCanvas {
+            opacity: 1;
+        }
+
+        /* ❤️ HEART RAIN */
+        .heart-rain {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .heart {
+            position: absolute;
+            top: -20px;
+            color: var(--pink);
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(110vh);
+                opacity: 0.6;
+            }
+        }
+
+        /* CARD */
+        .card {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 720px;
+            padding: clamp(20px, 4vw, 40px);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(255, 59, 122, 0.25);
+            transition: all 0.6s ease;
+        }
+
+        body.dark .card {
+            background: var(--dark-card);
+            color: #ffe6ff;
+            box-shadow: 0 20px 60px rgba(255, 0, 140, 0.4);
+        }
+
+        /* Toggle */
+        .theme-toggle {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 22px;
+            cursor: pointer;
+        }
+
+        /* Heading */
+        h1 {
+            font-family: "Playfair Display", serif;
+            font-size: clamp(24px, 5vw, 42px);
+            margin-bottom: 20px;
+        }
+
+        /* Couple */
+        .couple {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: clamp(10px, 3vw, 20px);
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .person {
+            width: clamp(80px, 20vw, 120px);
+            height: clamp(80px, 20vw, 120px);
+            border-radius: 50%;
+            overflow: hidden;
+            border: 4px solid white;
+        }
+
+        .person img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .heart-between {
+            font-size: clamp(22px, 6vw, 32px);
+        }
+
+        /* Text */
+        .love-text {
+            font-size: clamp(14px, 3.5vw, 18px);
+            margin-bottom: 25px;
+            line-height: 1.7;
+        }
+
+        /* BUTTON ZONE */
+        .button-zone {
+            position: relative;
+            height: 120px;
+            margin-top: 20px;
+        }
+
+        /* BUTTON BASE */
+        button {
+            padding: 12px 26px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: absolute;
+        }
+
+        /* YES BUTTON */
+        #yesBtn {
+            left: 20%;
+            top: 40%;
+            background: linear-gradient(135deg, #ff5f9e, #ff2f6f);
+            color: white;
+            box-shadow: 0 8px 20px rgba(255, 59, 122, 0.4);
+        }
+
+        #yesBtn:hover {
+            transform: scale(1.08);
+        }
+
+        /* NO BUTTON FIXED DESIGN */
+        #noBtn {
+            right: 20%;
+            top: 40%;
+            background: white;
+            color: var(--pink-dark);
+            border: 2px solid var(--pink);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        #noBtn:hover {
+            background: #fff0f6;
+        }
+
+        /* RESULT */
+        .result {
+            display: none;
+            margin-top: 25px;
+        }
+
+        .result h2 {
+            font-family: "Playfair Display", serif;
+            font-size: clamp(26px, 5vw, 38px);
+            margin-bottom: 15px;
+        }
+
+        .result p {
+            font-size: clamp(14px, 3.5vw, 18px);
+            line-height: 1.8;
+        }
+
+        .fireworks {
+            width: 100%;
+            max-width: 300px;
+            margin-top: 20px;
+            border-radius: 12px;
+        }
+
+        /* Mobile */
+        @media(max-width:480px) {
+
+            #yesBtn,
+            #noBtn {
+                position: relative;
+                display: inline-block;
+                margin: 10px;
+                left: unset;
+                right: unset;
+                top: unset;
+            }
+
+            .button-zone {
+                height: auto;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <canvas id="starsCanvas"></canvas>
+    <div class="heart-rain" id="heartRain"></div>
+
+    <!-- 🎵 SONG -->
+    <audio id="bgMusic" loop>
+        <source src="/src/jenis.mp3" type="audio/mp3">
+    </audio>
+
+    <main class="card">
+        <button class="theme-toggle" id="themeToggle">🌙</button>
+
+        <h1>Hey Srushti 💖<br>Will you be my Valentine?</h1>
+
+        <div class="couple">
+            <div class="person"><img src="/src/j.jpeg"></div>
+            <div class="heart-between">❤️</div>
+            <div class="person"><img src="/src/s.jpeg"></div>
+        </div>
+
+        <p class="love-text">
+            From the moment you came into my life 💫,<br>
+            everything feels warmer and brighter 🌸<br>
+            My heart chooses you… every single time 🥹💗
+        </p>
+
+        <section class="button-zone" id="zone">
+            <button id="yesBtn">Yes 💖</button>
+            <button id="noBtn">No 🙈</button>
+        </section>
+
+        <section class="result" id="result">
+            <h2>You Said YES 💖🥹</h2>
+            <p>
+                Srushti ❤️<br><br>
+                This is the beginning of our forever ✨<br>
+                I promise to protect your smile and stand beside you always 💍💖<br><br>
+                <strong>— Yours forever, Jenis 💌</strong>
+            </p>
+
+        </section>
+    </main>
+
+    <script>
+        // ❤️ HEART RAIN
+        const heartRain = document.getElementById("heartRain");
+        function createHeart() {
+            const heart = document.createElement("div");
+            heart.className = "heart";
+            heart.innerHTML = "❤️";
+            heart.style.left = Math.random() * 100 + "vw";
+            heart.style.fontSize = (14 + Math.random() * 20) + "px";
+            heart.style.animationDuration = (4 + Math.random() * 4) + "s";
+            heartRain.appendChild(heart);
+            setTimeout(() => heart.remove(), 8000);
+        }
+        setInterval(createHeart, 400);
+
+        // ⭐ STARS
+        const canvas = document.getElementById("starsCanvas");
+        const ctx = canvas.getContext("2d");
+        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        resize(); window.addEventListener("resize", resize);
+        let stars = [];
+        for (let i = 0; i < 180; i++) {
+            stars.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, r: Math.random() * 2 + 0.5, a: Math.random(), s: Math.random() * 0.02 });
+        }
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            stars.forEach(star => {
+                star.a += star.s;
+                if (star.a <= 0 || star.a >= 1) star.s = -star.s;
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255,255,255,${star.a})`;
+                ctx.fill();
+            });
+            requestAnimationFrame(draw);
+        }
+        draw();
+
+        // 🎊 YES CLICK
+        const bgMusic = document.getElementById("bgMusic");
+        document.getElementById("yesBtn").onclick = () => {
+            document.getElementById("zone").style.display = "none";
+            document.getElementById("result").style.display = "block";
+
+            document.body.classList.add("dark");
+            document.getElementById("themeToggle").innerHTML = "☀️";
+
+            bgMusic.volume = 0.7;
+            bgMusic.play().catch(() => { });
+
+            confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 } });
+        };
+
+        // 🌙 Toggle
+        document.getElementById("themeToggle").onclick = () => {
+            document.body.classList.toggle("dark");
+            document.getElementById("themeToggle").innerHTML =
+                document.body.classList.contains("dark") ? "☀️" : "🌙";
+        };
+
+        // 🙈 Smart Escape NO
+        const noBtn = document.getElementById("noBtn");
+        const zone = document.getElementById("zone");
+
+        zone.addEventListener("mousemove", (e) => {
+            const rect = noBtn.getBoundingClientRect();
+            const zoneRect = zone.getBoundingClientRect();
+            const dx = (rect.left + rect.width / 2) - e.clientX;
+            const dy = (rect.top + rect.height / 2) - e.clientY;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance < 120) {
+                let angle = Math.atan2(dy, dx);
+                let move = 150;
+                let newLeft = rect.left - zoneRect.left + Math.cos(angle) * move;
+                let newTop = rect.top - zoneRect.top + Math.sin(angle) * move;
+
+                newLeft = Math.max(0, Math.min(zone.offsetWidth - rect.width, newLeft));
+                newTop = Math.max(0, Math.min(zone.offsetHeight - rect.height, newTop));
+
+                noBtn.style.left = newLeft + "px";
+                noBtn.style.top = newTop + "px";
+            }
+        });
+    </script>
+
+</body>
+
+</html>
